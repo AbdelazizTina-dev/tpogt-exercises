@@ -1,9 +1,11 @@
 package main
 
 import (
+	"os"
+
 	"github.com/AbdelazizTina-dev/tpogt-exercises/counter"
 )
 
 func main() {
-	counter.Main()
+	os.Exit(counter.Main())
 }
