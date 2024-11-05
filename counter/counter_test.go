@@ -2,9 +2,11 @@ package counter_test
 
 import (
 	"bytes"
+	"os"
 	"testing"
 
 	"github.com/AbdelazizTina-dev/tpogt-exercises/counter"
+	"github.com/rogpeppe/go-internal/testscript"
 )
 
 func TestCounterCountLinesFromInput(t *testing.T) {
@@ -47,4 +49,17 @@ func TestCounterIgnoresEmptyArgs(t *testing.T) {
 	if want != got {
 		t.Errorf("want %q, got %q", want, got)
 	}
+}
+
+func Test(t *testing.T) {
+	t.Parallel()
+	testscript.Run(t, testscript.Params{
+		Dir: "testdata/script",
+	})
+}
+
+func TestMain(m *testing.M) {
+	os.Exit(testscript.RunMain(m, map[string]func() int{
+		"count": counter.Main,
+	}))
 }
