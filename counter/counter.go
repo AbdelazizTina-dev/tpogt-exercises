@@ -9,6 +9,7 @@ import (
 )
 
 type Counter struct {
+	files  []io.Reader
 	Input  io.Reader
 	Output io.Writer
 }
@@ -40,12 +41,15 @@ func WithInputArgs(args []string) Option {
 		if len(args) < 1 {
 			return nil
 		}
-
-		file, err := os.Open(args[0])
-		if err != nil {
-			return errors.New("error opening file")
+		c.files = make([]io.Reader, len(args))
+		for i, path := range args {
+			f, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			c.files[i] = f
 		}
-		c.Input = file
+		c.Input = io.MultiReader(c.files...)
 		return nil
 	}
 }
@@ -80,6 +84,9 @@ func (c *Counter) Lines() int {
 	input := bufio.NewScanner(c.Input)
 	for input.Scan() {
 		lines++
+	}
+	for _, f := range c.files {
+		f.(io.Closer).Close()
 	}
 	return lines
 }

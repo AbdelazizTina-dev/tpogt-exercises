@@ -2,6 +2,8 @@ package counter_test
 
 import (
 	"bytes"
+	"fmt"
+	"io"
 	"os"
 	"testing"
 
@@ -31,6 +33,25 @@ func TestCounterCountLinesFromInputGivenByArgs(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := 3
+	got := c.Lines()
+	if want != got {
+		t.Errorf("want %d, got %d", want, got)
+	}
+}
+
+func TestCounterCountLinesFromMultipleInputsGivenByArgs(t *testing.T) {
+	t.Parallel()
+	args := []string{"testdata/three_lines.txt", "testdata/four_lines.txt"}
+	c, err := counter.NewCounter(counter.WithInputArgs(args))
+	if err != nil {
+		t.Fatal(err)
+	}
+	content, err := io.ReadAll(c.Input)
+	if err != nil {
+		fmt.Println("Error reading from multiReader:", err)
+	}
+	fmt.Println(string(content))
+	want := 7
 	got := c.Lines()
 	if want != got {
 		t.Errorf("want %d, got %d", want, got)
